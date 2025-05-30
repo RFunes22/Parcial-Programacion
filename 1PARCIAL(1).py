@@ -1,4 +1,6 @@
-def calcular_promedios_participantes(matriz_puntaje:list,cantidad_jurados:int) -> list:
+# import os
+# from funciones import *
+def calcular_promedios_participantes(matriz_puntaje:list,lista_promedios_participantes:list,cantidad_jurados:int) -> list:
     for fil in range(len(matriz_puntaje)):
         acumulador = 0
         for col in range(len(matriz_puntaje[fil])):
@@ -7,10 +9,10 @@ def calcular_promedios_participantes(matriz_puntaje:list,cantidad_jurados:int) -
     
     return lista_promedios_participante
 
-def calcular_promedio_jurado(matriz_puntaje:list,cantidad_jurados:int,cantidad_participantes) -> bool:
-      for col in range(len(matriz_puntaje)):
+def calcular_promedio_jurado(matriz_puntaje:list,lista_promedios_jurado:list,cantidad_participantes:int) -> bool:
+      for col in range(len(matriz_puntaje[fil])):
             acumulador = 0
-            for fil in range(len(matriz_puntaje[col])):
+            for fil in range(len(matriz_puntaje)):
                 acumulador += matriz_puntaje[fil][col]
             lista_promedios_jurado[col] = acumulador / cantidad_participantes 
       for i in range(len(lista_promedios_jurado)):
@@ -131,7 +133,7 @@ while opcion != 0:
         while bandera_nombres == False and bandera_puntaje == False:
             print("No se cargaron los nombres y puntajes de los participantes")
             break
-        lista_promedios_participante = calcular_promedios_participantes(matriz_puntaje,3)
+        calcular_promedios_participantes(matriz_puntaje,lista_promedios_participante,3)
         mostrar_matriz(matriz_puntaje)
     elif opcion == 4:
         while bandera_nombres == False and bandera_puntaje == False:
@@ -147,5 +149,5 @@ while opcion != 0:
         while bandera_nombres == False and bandera_puntaje == False:
             print("No se cargaron los nombres y puntajes de los participantes")
             break
-        calcular_promedio_jurado(matriz_puntaje,3,2)
+        calcular_promedio_jurado(matriz_puntaje,lista_promedios_jurado,2)
         
