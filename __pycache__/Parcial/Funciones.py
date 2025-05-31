@@ -1,16 +1,8 @@
-def calcular_promedios_participantes(matriz_puntaje:list,lista_promedios_participante:list,cantidad_jurados:int) -> list:
-    for fil in range(len(matriz_puntaje)):
-        acumulador = 0
-        for col in range(len(matriz_puntaje[fil])):
-            acumulador += matriz_puntaje[fil][col]
-        lista_promedios_participante[fil]= acumulador / cantidad_jurados
-    
-    return lista_promedios_participante
-
-def calcular_promedio_jurado(matriz_puntaje:list,lista_promedios_jurado:list,cantidad_participantes:int) -> bool:
-      for col in range(3):
+def calcular_promedio_jurado(matriz_puntaje:list,cantidad_participantes:int) -> bool:
+      lista_promedios_jurado = crear_array (3,0)
+      for col in range(len(matriz_puntaje[fil])):
             acumulador = 0
-            for fil in range(cantidad_participantes):
+            for fil in range(len(matriz_puntaje)):
                 acumulador += matriz_puntaje[fil][col]
             lista_promedios_jurado[col] = acumulador / cantidad_participantes 
       for i in range(len(lista_promedios_jurado)):
@@ -63,7 +55,7 @@ def crear_array(cantidad_elementos:float,valor_inicial:any) -> list:
     
     return array
 
-def cargar_puntaje(matriz_puntaje:list,lista_nombres:list) -> bool:
+def cargar_puntaje(matriz_puntaje:list,lista_nombres:list) -> list:
     for fil in range(len(matriz_puntaje)):
         for col in range(len(matriz_puntaje[fil])):
             #Pedir el dato
@@ -74,7 +66,7 @@ def cargar_puntaje(matriz_puntaje:list,lista_nombres:list) -> bool:
                 puntaje = int(input(f"Ingrese nuevamente el puntaje del juez numero {col + 1} para {lista_nombres[fil]}: "))
             #Guardarlo en la matriz
             matriz_puntaje[fil][col] = puntaje
-
+       
     return matriz_puntaje
 
 
@@ -94,7 +86,7 @@ def filtrar_promedios(lista_promedios:list,lista_nombres:list,criterio:float) ->
 
     return bandera
 
-def mostrar_matriz(matriz:list,lista_nombres:list,lista_promedios_participante:list) -> None:
+def mostrar_matriz(matriz:list,lista_nombres:list,lista_promedios_participantes:list) -> None:
     for fil in range(len(matriz)):
         #Muestra una lista ordenada con el nombre, votos de cada juez y promedio
         print(f"NOMBRE PARTICIPANTE: {lista_nombres[fil]}")
@@ -102,36 +94,12 @@ def mostrar_matriz(matriz:list,lista_nombres:list,lista_promedios_participante:l
             print(f"VOTO JUEZ {col+1}: {matriz[fil][col]}")
         print(f"PROMEDIO: {lista_promedios_participante[fil]}")
 
-def comparar_jurados_estricto (lista_promedios_jurado:list) -> bool:
-    comparado = lista_promedios_jurado[0]
-    num = 0
-    for i in range(3):
-        if lista_promedios_jurado[i] < comparado:
-            comparado = lista_promedios_jurado[i]
-            num = i
-    print(f"El jurado mas estricto es el {num+1} con {comparado} de promedio")
+def calcular_promedios_participantes(matriz_puntaje:list,cantidad_jurados:int) -> list:
+    lista_promedios_participante = crear_array(2,0)
+    for fil in range(3):
+        acumulador = 0
+        for col in range(len(matriz_puntaje[fil])):
+            acumulador += matriz_puntaje[fil][col]
+        lista_promedios_participante[fil]= acumulador / cantidad_jurados
     
-    return True
-
-def comparar_jurados_generoso (lista_promedios_jurado:list) -> bool:
-    comparado = lista_promedios_jurado[0]
-    num = 0
-    for i in range(3):
-        if lista_promedios_jurado[i] > comparado:
-            comparado = lista_promedios_jurado[i]
-            num = i
-    print(f"El jurado mas generoso es el {num+1} con {comparado} de promedio")
-    
-    return True
-
-def encontrar_promedios_iguales (lista_promedios_participante:list,lista_nombre:list) -> bool:
-    bandera = False
-    for i in range (len(lista_promedios_participante)):
-        for p in range(len(lista_promedios_participante)):
-            if lista_promedios_participante[i] == lista_promedios_participante[p]:
-                if i == p:
-                    print(f"{lista_nombre[i]} y {lista_nombre[p]} tienen el mismo promedio")
-                    bandera = True
-                    break
-    if bandera == False:
-        print("No hay participantes con los mismos promedios")
+    return lista_promedios_participante
