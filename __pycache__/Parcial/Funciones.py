@@ -1,14 +1,17 @@
-def calcular_promedio_jurado(matriz_puntaje:list,cantidad_participantes:int) -> bool:
-      lista_promedios_jurado = crear_array (3,0)
-      for col in range(len(matriz_puntaje[fil])):
-            acumulador = 0
-            for fil in range(len(matriz_puntaje)):
-                acumulador += matriz_puntaje[fil][col]
-            lista_promedios_jurado[col] = acumulador / cantidad_participantes 
-      for i in range(len(lista_promedios_jurado)):
-            print(f"PROMEDIO DEL JUEZ {i+1}: {lista_promedios_jurado[i]}")
-
-      return True
+def calcular_promedio_jurado(matriz_puntaje:list,cantidad_participantes:int) -> list:
+    #Calcula los promedios individuales de cada jurado
+    lista_promedios_jurado = []
+      #Recorre la matriz por columnas
+    for col in range(len(matriz_puntaje[fil])):
+        #Empieza reiniciando el contador cuando cambia de columna
+        acumulador = 0
+        #Recorre toda la columna 0 de todas las filas y cambia a la columna 1 y repite el proceso
+        for fil in range(len(matriz_puntaje)):
+            acumulador += matriz_puntaje[fil][col]
+        #Guarda el promedio de cada juez en una lista
+        lista_promedios_jurado[col] = acumulador / cantidad_participantes
+    
+    return lista_promedios_jurado
 
 def cargar_nombres(lista_nombres:list,cantidad_nombres:int) -> list:
       #Carga, verifica y guarda en una lista, una cantidad de nombres dada
@@ -86,7 +89,7 @@ def filtrar_promedios(lista_promedios:list,lista_nombres:list,criterio:float) ->
 
     return bandera
 
-def mostrar_matriz(matriz:list,lista_nombres:list,lista_promedios_participantes:list) -> None:
+def mostrar_matriz(matriz:list,lista_nombres:list,lista_promedios_participante:list) -> None:
     for fil in range(len(matriz)):
         #Muestra una lista ordenada con el nombre, votos de cada juez y promedio
         print(f"NOMBRE PARTICIPANTE: {lista_nombres[fil]}")
@@ -95,11 +98,54 @@ def mostrar_matriz(matriz:list,lista_nombres:list,lista_promedios_participantes:
         print(f"PROMEDIO: {lista_promedios_participante[fil]}")
 
 def calcular_promedios_participantes(matriz_puntaje:list,cantidad_jurados:int) -> list:
-    lista_promedios_participante = crear_array(2,0)
+    #Calcula y guarda en una lista los promedios de los participantes
+    lista_promedios_participante = []
+    #Recorre el la matriz con los puntajes por fila
     for fil in range(3):
         acumulador = 0
+    #Recorre la primer fila, suma todos los valores y los divide por la cantidad de jurados que hayamos ingresado
         for col in range(len(matriz_puntaje[fil])):
             acumulador += matriz_puntaje[fil][col]
+        #Guarda los promedios en una lista
         lista_promedios_participante[fil]= acumulador / cantidad_jurados
     
+    #Devuelve la lista donde el indice 0 corresponde al primer participantes, el 1 al segundo y asi sucesivamente
     return lista_promedios_participante
+
+def encontrar_promedios_iguales(lista_promedios_participante:list,lista_nombres) -> bool:
+    # Encuentra y muestra los promedios que son iguales en el array    
+    encontrados = False
+    promedios_ya_revisados = []    
+    # Comparar cada promedio con los demás
+    for i in range(5):
+        promedio_actual = lista_promedios_participante[i]        
+        # Verificar si ya revisamos este promedio
+        ya_revisado = False
+        for revisado in promedios_ya_revisados:
+            if promedio_actual == revisado:
+                ya_revisado = True
+                break
+        
+        if ya_revisado == True:
+            continue
+        # Contar cuántas veces aparece este promedio
+        contador = 0
+        posiciones = []
+        
+        for j in range(5):
+            if lista_promedios_participante[j] == promedio_actual:
+                contador += 1
+                posiciones = posiciones + [j+1]
+        # Si aparece más de una vez, mostrarlo
+        if contador > 1:
+            encontrados = True
+            print(f"Promedio {promedio_actual} aparece {contador} veces con el participante: {lista_nombres[posiciones]}")
+        # Agregar a la lista de ya revisados
+        promedios_ya_revisados = promedios_ya_revisados + [promedio_actual]
+    
+    # Mostrar resultado final
+    if encontrados == False:
+        print("NO SE ENCONTRARON PROMEDIOS IGUALES")
+        print("Todos los promedios son diferentes")
+
+    return True
