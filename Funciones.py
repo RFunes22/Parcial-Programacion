@@ -1,91 +1,43 @@
-def calcular_promedios_participantes(matriz_puntaje:list,lista_promedios_participante:list,cantidad_jurados:int) -> list:
-    for fil in range(len(matriz_puntaje)):
+from Inputs import *
+def calcular_promedios_participantes(matriz_puntaje:list,cantidad_jurados:int,cantidad_participantes:int) -> list:
+    #Calcula el promedio de un grupo de participantes en base a la calificacion de una cantidad de jueces
+    #Crea la lista para devolver los promedios
+    lista_promedios_participante = crear_array(cantidad_participantes,0)
+    #Recorre la matriz donde se guardaron los puntajes
+    for fil in range(len(lista_promedios_participante)):
+        #Cada vez que cambia de fila reinicia el acumulador (cada fila representa un participante diferente)
         acumulador = 0
-        for col in range(len(matriz_puntaje[fil])):
+        for col in range(cantidad_jurados):
+            #Pasa secuencialmente por cada columna sumando todas, de una misma fila
             acumulador += matriz_puntaje[fil][col]
+        #Cuando tiene la suma de la nota de cada juez, para el mismo participante, la divide por la cantidad de jueces
+        #Guarda ese promedio en el indice correspondiente al numero de participante
         lista_promedios_participante[fil]= acumulador / cantidad_jurados
-    
+    #Devuelve la lista, donde los indices coinciden con la lista nombres
     return lista_promedios_participante
 
-def calcular_promedio_jurado(matriz_puntaje:list,lista_promedios_jurado:list,cantidad_participantes:int) -> bool:
-    for col in range(3):
+def calcular_promedio_jurado(matriz_puntaje:list,cantidad_participantes:int,cantidad_jurados:int) -> list:
+    #Calcula y guarda en una lista los promedios de cada jurado
+    #Crea la lista que va a devolver
+    lista_promedios_jurado = crear_array (cantidad_jurados,0)
+    #Recorre la matriz donde se guardaron los puntajes
+    for col in range(cantidad_jurados):
         acumulador = 0
         for fil in range(cantidad_participantes):
             acumulador += matriz_puntaje[fil][col]
-        lista_promedios_jurado[col] = acumulador / cantidad_participantes 
-    for i in range(3):
-        print(f"PROMEDIO DEL JUEZ {i+1}: {lista_promedios_jurado[i]}")
-
-    return True
-
-def cargar_nombres(lista_nombres:list,cantidad_nombres:int) -> list:
-      #Carga, verifica y guarda en una lista, una cantidad de nombres dada
-      for i in range(cantidad_nombres):
-            bandera = False
-            while bandera == False:
-                  #Pide el dato
-                  lista_nombres[i] = input(f"Ingrese el nombre del participante {i+1}: ")
-                  valor = lista_nombres[i]
-                  #Recorre el str guardado en la posicion i de la lista de nombres
-                  for p in range(len(valor)):
-                        #Verifica que tenga mas de 3 digitos
-                        if len(valor) >= 3:
-                              valor_caracter = 0                              
-                              valor_caracter = valor[p]
-                              valor_caracter = ord(valor_caracter)
-                              bandera = True
-                              #Verifica que el valor ascii de los caracteres sean validos
-                              if valor_caracter >= 123 or valor_caracter <= 64:
-                                    #Mensaje de error
-                                    print(f"ERROR\n{valor} no es un nombre valido. Para que cargar correctamente el nombre, este debe contener solo letras y espacio")
-                                    bandera = False
-                        else:
-                              #Mensaje de error
-                              print(f"ERROR\n{valor} no es un nombre valido. Para que cargar correctamente el nombre, este debe contener solo letras y espacio")
-                              bandera = False
-      if bandera == True:
-            #Confirmacion de carga exitosa
-            print("Los nombres fueron cargados correctamente")
-      
-      return lista_nombres
-
-def crear_matriz(cantidad_filas:int,cantidad_columnas:int,valor_inicial:any) -> list:
-    #Sirve para crear una matriz
-    matriz = []
-    for i in range(cantidad_filas):
-        fila = [valor_inicial] * cantidad_columnas
-        matriz += [fila]
+        lista_promedios_jurado[col] = acumulador / cantidad_participantes
         
-    return matriz
-
-def crear_array(cantidad_elementos:float,valor_inicial:any) -> list:
-    array = [valor_inicial] * cantidad_elementos
-    
-    return array
-
-def cargar_puntaje(matriz_puntaje:list,lista_nombres:list) -> bool:
-    for fil in range(len(matriz_puntaje)):
-        for col in range(len(matriz_puntaje[fil])):
-            #Pedir el dato
-            puntaje = int(input(f"Ingrese el puntaje del juez numero {col + 1} para {lista_nombres[fil]}: "))
-            #Verificacion del dato
-            while puntaje < 1 or puntaje > 10:
-                print("Puntaje ingresada fuera de rango (debe estar entre 1 y 10)")
-                puntaje = int(input(f"Ingrese nuevamente el puntaje del juez numero {col + 1} para {lista_nombres[fil]}: "))
-            #Guardarlo en la matriz
-            matriz_puntaje[fil][col] = puntaje
-
-    return matriz_puntaje
-
+    return lista_promedios_jurado
 
 def filtrar_promedios(lista_promedios:list,lista_nombres:list,criterio:float) -> bool:
+    #Filtra una lista de valores segun un criterio dado y los imprime en pantalla
+    bandera = False
     for i in range(len(lista_promedios)):
-        bandera = False
         #Compara los promedios con el criterio seleccionado
         if lista_promedios[i] < criterio:
+            #Sí el valor es menor que el criterio, imprime su nombre y promedio en pantalla
+            print(f"{lista_nombres[i]} tiene de promedio menos de {criterio}.\nSu promedio es {lista_promedios[i]}")
             bandera = True
-            #Sí el participante tiene menos puntaje que el criterio, imprime su nombre en  pantalla
-            print(f"{lista_nombres[i]} tiene de promedio menos de {criterio}, tiene {lista_promedios[i]} como promedio")
     if bandera == False:
         #Mensaje de error
         print(f"Ningun participante tiene menos de {criterio} promedio")
@@ -100,73 +52,92 @@ def mostrar_matriz(matriz:list,lista_nombres:list,lista_promedios_participante:l
             print(f"VOTO JUEZ {col+1}: {matriz[fil][col]}")
         print(f"PROMEDIO: {lista_promedios_participante[fil]}")
 
-def comparar_jurados_estricto (lista_promedios_jurado:list) -> bool:
+def comparar_jurados_estricto (lista_promedios_jurado:list,cantidad_jurados:int) -> bool:
+    #Compara el promedio de los jurados para determinar cual es mas bajo
+    #Le asigna a una variable auxiliar el valor del primer elemento de la lista
     comparado = lista_promedios_jurado[0]
+    #Usa otro variable auxiliar para guardar el indice en el que se encuentra el promedio mas bajo
     num = 0
-    for i in range(3):
+    #Recorre la lista de promedios comparandolos con el primer valor y reemplazando el valor de la variable temporal a medida que encuentra valores más bajos dentro de la lista
+    for i in range(cantidad_jurados):
         if lista_promedios_jurado[i] < comparado:
+            #Al encontrar un valor más bajo, le asigna ese valor a la variable auxiliar
             comparado = lista_promedios_jurado[i]
+            #Guarda el indice en donde encontro este valor
             num = i
+    #Por pantalla usa las dos variables auxiliares para mostrar el numero de jurado y el promedio correspondiente
     print(f"El jurado mas estricto es el {num+1} con {comparado} de promedio")
     
     return True
 
-def comparar_jurados_generoso (lista_promedios_jurado:list) -> bool:
+def comparar_jurados_generoso (lista_promedios_jurado:list,cantidad_jurados:int) -> bool:
+    #Compara el promedio de los jurados para determinar cual es más alto
+    #Le asigna a una variable auxiliar el valor del primer elemento de la lista
     comparado = lista_promedios_jurado[0]
+    #Usa otro variable auxiliar para guardar el indice en el que se encuentra el promedio mas bajo
     num = 0
-    for i in range(3):
+    #Recorre la lista de promedios comparandolos con el primer valor y reemplazando el valor de la variable temporal a medida que encuentra valores más altos dentro de la lista
+    for i in range(cantidad_jurados):
         if lista_promedios_jurado[i] > comparado:
+            #Al encontrar un valor más bajo, le asigna ese valor a la variable auxiliar
             comparado = lista_promedios_jurado[i]
+            #Guarda el indice en donde encontro este valor
             num = i
+    #Por pantalla usa las dos variables auxiliares para mostrar el numero de jurado y su promedio correspondiente
     print(f"El jurado mas generoso es el {num+1} con {comparado} de promedio")
     
     return True
 
-def encontrar_promedios_iguales(lista_promedios_participante:list,lista_nombres) -> bool:
-    # Encuentra y muestra los promedios que son iguales en el array    
+def encontrar_promedios_iguales(lista_promedios_participante: list, lista_nombres: list, cantidad_participantes: int) -> bool:
+    # Encuentra y muestra por pantalla los promedios que son iguales en la lista dada
+    # Inicializa las variables que va a usar
     encontrados = False
-    promedios_ya_revisados = []    
+    promedios_ya_revisados = crear_array(cantidad_participantes, 0)
+    contador_revisados = 0
+    posiciones = crear_array(cantidad_participantes, 0)  # Array para guardar posiciones
     # Comparar cada promedio con los demás
-    for i in range(5):
-        promedio_actual = lista_promedios_participante[i]        
-        # Verificar si ya revisamos este promedio
+    for i in range(cantidad_participantes):
+        promedio_actual = lista_promedios_participante[i]
+        # Verificar si ya fue revisado
         ya_revisado = False
-        for revisado in promedios_ya_revisados:
-            if promedio_actual == revisado:
+        for k in range(contador_revisados):
+            if promedio_actual == promedios_ya_revisados[k]:
                 ya_revisado = True
                 break
-        
         if ya_revisado == True:
             continue
-        # Contar cuántas veces aparece este promedio
+        # Contar cuántas veces aparece este promedio y guardar posiciones
         contador = 0
-        posiciones = []
-        
-        for j in range(5):
+        for j in range(cantidad_participantes):
             if lista_promedios_participante[j] == promedio_actual:
-                contador += 1
-                posiciones = posiciones + [j+1]
+                posiciones[contador] = j  # Guardar la posición real (sin +1)
+                contador = contador + 1
         # Si aparece más de una vez, mostrarlo
         if contador > 1:
             encontrados = True
-            print(f"Promedio {promedio_actual} aparece {contador} veces con el participante: {lista_nombres[posiciones]}")
+            mensaje = f"Promedio {promedio_actual} aparece {contador} veces en participantes: "
+            # Construir la cadena con los nombres de los participantes
+            for p in range(contador):
+                if p > 0:
+                    mensaje = mensaje + ", "
+                mensaje = mensaje + f"{lista_nombres[posiciones[p]]}"
+            print(mensaje)
         # Agregar a la lista de ya revisados
-        promedios_ya_revisados = promedios_ya_revisados + [promedio_actual]
-    
-    # Mostrar resultado final
+        promedios_ya_revisados[contador_revisados] = promedio_actual
+        contador_revisados = contador_revisados + 1
+    # En caso de no haber repeticiones en la lista, lo muestra por pantalla
     if encontrados == False:
         print("NO SE ENCONTRARON PROMEDIOS IGUALES")
-        print("Todos los promedios son diferentes")
+    
+    return encontrados
 
-    return True
-
-def ordenar_nombres_alfabeticamente(lista_nombres:list,cantidad_participantes:int) -> list:
+def ordenar_nombres_alfabeticamente(lista_nombres:list) -> list:
     #Ordena un array de nombres alfabéticamente
-    # Crear una copia del array para no modificar el original
+    #Crear una copia del array para no modificar el original
     nombres_ordenados = lista_nombres[:]
     #Recorre la lista original en todo su largo
-    for i in range(cantidad_participantes):
-        for j in range(5 - i - 1):
+    for i in range(len(lista_nombres)):
+        for j in range(len(lista_nombres)-i-1):
             # Comparar los nombres
             if nombres_ordenados[j] > nombres_ordenados[j + 1]:
                 # Intercambiar la posicion usando variables temporales
@@ -176,40 +147,60 @@ def ordenar_nombres_alfabeticamente(lista_nombres:list,cantidad_participantes:in
     
     return nombres_ordenados
 
-def top_3_promedios(lista_promedios_participante:list) -> list:
-    #Recibe 5 promedios y devuelve una lista con los 3 mejores (más altos).
+
+def calcular_mejores_promedios(lista_promedios_participante: list, cantidad_participantes: int) -> tuple:
+    #Recibe una lista de promedios y devuelve los 3 mejores (más altos) y sus índices originales.
+    #Crear lista de índices para rastrear posiciones originales
+    indices_originales = crear_array(cantidad_participantes,0)  # Crear una lista del tamaño de participantes llena de ceros
+    for i in range(len(indices_originales)):
+        #Llena esta lista con los indices de menor a mayor
+        indices_originales[i] = i
     #Ordenar de mayor a menor usando algoritmo de selección
+    #Intercambiamos tanto los valores como los índices
     for i in range(len(lista_promedios_participante)):
-        # Encontrar el índice del elemento más grande en la parte no ordenada
-        max_idx = i
-        for j in range(5):
-            if lista_promedios_participante[j] > lista_promedios_participante[max_idx]:
-                max_idx = j
-        # Intercambiar el elemento más grande con el primer elemento no ordenado
-        temporal = lista_promedios_participante[i]
-        lista_promedios_participante[i] = lista_promedios_participante[max_idx]
-        lista_promedios_participante[max_idx] = temporal
-    # Devolver solo los primeros 3, que serian los que mayor puntaje promedio sacaron
+        #Encontrar el índice del elemento más grande en la parte no ordenada
+        max_i = i
+        j = i + 1  # Empezar desde la siguiente posición
+        while j < len(lista_promedios_participante):
+            if lista_promedios_participante[j] > lista_promedios_participante[max_i]:
+                max_i = j
+            j = j + 1 
+        #Intercambiar elementos en ambas listas usando variables auxiliares
+        temporal_valor = lista_promedios_participante[i]
+        lista_promedios_participante[i] = lista_promedios_participante[max_i]
+        lista_promedios_participante[max_i] = temporal_valor
+        temporal_indice = indices_originales[i]
+        indices_originales[i] = indices_originales[max_i]
+        indices_originales[max_i] = temporal_indice
+    #Devolver los 3 mejores valores y sus índices originales (ya están ordenados)
     mejores_tres = [lista_promedios_participante[0], lista_promedios_participante[1], lista_promedios_participante[2]]
+    indice_referencia = [indices_originales[0], indices_originales[1], indices_originales[2]]
+    
+    return mejores_tres, indice_referencia
 
-    return mejores_tres
-
-def buscar (lista_nombres:list,lista_promedios_participante:list, nombre_buscado:str) -> bool:
+def buscar(lista_nombres:list,matriz:list,nombre_buscado:str,cantidad_jurados:int,cantidad_participantes:int) -> bool:
     #Busca un nombre pedido previamente ignorando mayusculas y minusculas
     encontrado = False    
-    # Convertir el nombre buscado a minúsculas para comparar
+    #Convertir el nombre buscado a minúsculas para comparar
     nombre_buscado_minus = nombre_buscado.lower()
-    # Buscar ignorando mayúsculas/minúsculas
+    #Buscar ignorando mayúsculas/minúsculas
     for i in range(len(lista_nombres)):
         if lista_nombres[i].lower() == nombre_buscado_minus:
             encontrado = True
             nombre_original = lista_nombres[i]
             indice = i
             break
-    # Mostrar resultado
+    #Mostrar resultado
     if encontrado == True:
-        print(f"¡Nombre encontrado\nFicha del Participante: NOMBRE: {lista_nombres[indice]}\nPROMEDIO:{lista_promedios_participante[indice]}")
+        lista_promedios_participante = calcular_promedios_participantes(matriz,cantidad_jurados,cantidad_participantes)
+        #Muestra el nombre buscado y su ficha
+        print(f"¡{nombre_original} encontrado!\nFICHA DEL PARTICIPANTE:\nNOMBRE: {lista_nombres[indice]}")
+        for col in range(len(matriz[indice])):
+            #Muestra los votos de cada juez y el promedio del participante
+            print(f"VOTO JUEZ {col+1}: {matriz[indice][col]}")
+        print(f"PROMEDIO: {lista_promedios_participante[indice]}")
     else:
-        print(f"El nombre '{nombre_buscado}' no se encuentra en la lista")
+        #Si no se encuentra el nombre buscado, lo informa por pantalla
+        print(f"El nombre {nombre_buscado} no se encuentra en la lista")
     
     return encontrado
